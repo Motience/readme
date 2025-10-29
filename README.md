@@ -346,15 +346,5 @@ motience-platform/
 6. **Monetization triggered** → Blockchain smart contracts calculate payments
 
 ## 📖 Documentation
-
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed system architecture
 - **[QUICK_START.md](QUICK_START.md)** - Step-by-step setup guide
-- **API Docs** - Swagger UI at service endpoints (see below)
-
-## 📝 License
-
-MIT
-
-## 🤝 Contributing
-
-Contributions welcome! Please read CONTRIBUTING.md for details.
+- **API Docs** - Swagger UI at service endpoints
