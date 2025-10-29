@@ -1,16 +1,45 @@
-# Motience - DePin Data Streaming Platform
+# Motience - Agentic DePin DataFi Platform
 
-A B2B SaaS platform for Decentralized Physical Infrastructure Networks (DePin) data streaming. The system connects IoT data producers and data consumers through a secure, real-time WebSocket infrastructure.
+Motience builds the infrastructure for Decentralized Physical Artificial Intelligence (DePAI), connecting real-world devices, robots, and sensors into an intelligent data network. It enables real-time data exchange between producers and consumers, powered by blockchain for traceability and monetization, and enhanced by agentic AI layers that transform raw signals into structured intelligence.
+
+## 📚 Repository Overview
+
+Motience platform consists of multiple specialized repositories:
+
+| Repository | Description | Technology | Purpose |
+|------------|-------------|------------|----------|
+| [readme](https://github.com/Motience/readme) | Platform documentation, setup scripts & orchestration | Bash, Markdown | Central hub for documentation and deployment |
+| [DepinPlugin](https://github.com/Motience/DepinPlugin) | IoT device client for data collection | Rust | Runs on edge devices (Raspberry Pi) to collect and stream sensor data |
+| [AuthenticationPlatform](https://github.com/Motience/AuthenticationPlatform) | User authentication & authorization service | Node.js, Express, PostgreSQL | JWT-based auth, role management (producer/consumer) |
+| [SubscriptionManager](https://github.com/Motience/SubscriptionManager) | Subscription management service | Node.js, Express, PostgreSQL | Manages producer-consumer subscription relationships |
+| [DataStreamManager](https://github.com/Motience/DataStreamManager) | Core data routing & blockchain integration | Node.js, Redis | Routes data, interacts with blockchain for transparent record-keeping |
+| [WebSocket-Server1](https://github.com/Motience/WebSocket-Server1) | Producer WebSocket server | Node.js, WebSocket | Accepts connections from IoT producers |
+| [Websocket-Server2](https://github.com/Motience/Websocket-Server2) | Consumer WebSocket server | Node.js, WebSocket, Redis | Delivers data streams to consumers |
+| [BlockchainHandler](https://github.com/Motience/BlockchainHandler) | Linera blockchain integration | Rust, Linera SDK | Records data transactions |
 
 ## 🏗️ Architecture Overview
 
 ```
 IoT Devices (Producers) → wss1 → Data Stream Manager → Redis Pub/Sub → wss2 → Consumers
-                            ↓                                              ↓
-                     Authentication Service                    Subscription Manager
-                            ↓                                              ↓
-                        PostgreSQL                                   PostgreSQL
+                            ↓              ↓                                   ↓
+                     Authentication   Blockchain Handler          Subscription Manager
+                         Service      (Linera Chain)                      ↓
+                            ↓              ↓                          PostgreSQL
+                        PostgreSQL   Transaction Records
+                                     (Who→Who, Timestamp)
+                                            ↓
+                                  Decentralized File Storage
+                                        (Raw Data)
 ```
+
+## 🔗 Blockchain Integration
+
+The **Linera blockchain** provides:
+- **Transparent Records**: Immutable logs of who sends data to whom
+- **Fair Monetization**: Stakeholder payment mechanisms
+- **Timestamp Verification**: Accurate recording of data consumption events
+- **Decentralized Storage**: Raw data stored in distributed file systems
+- **API Integration**: Data Stream Manager calls BlockchainHandler APIs to record transactions
 
 ## 📦 Microservices
 
@@ -68,49 +97,84 @@ IoT Devices (Producers) → wss1 → Data Stream Manager → Redis Pub/Sub → w
 
 ## 🚀 Quick Start
 
+> **Note**: This repository (`readme`) contains documentation, Docker configurations, and orchestration scripts. Individual services are in separate repositories (see table above).
+
 ### Prerequisites
 - Node.js 18+
-- Rust 1.70+ (for iot_plugin)
-- Docker & Docker Compose (for PostgreSQL and Redis)
+- Rust 1.70+ (for IoT plugin and BlockchainHandler)
+- Docker & Docker Compose
+- Git (to clone service repositories)
 
-### 1. Start Infrastructure
+### 1. Clone Repositories
+
 ```bash
-# Use docker compose (modern syntax)
-docker compose up -d
+# Create workspace directory
+mkdir motience-platform && cd motience-platform
 
-# Or if you have standalone docker-compose installed
-docker-compose up -d
+# Clone all service repositories
+git clone https://github.com/Motience/readme.git
+git clone https://github.com/Motience/DepinPlugin.git
+git clone https://github.com/Motience/AuthenticationPlatform.git
+git clone https://github.com/Motience/SubscriptionManager.git
+git clone https://github.com/Motience/DataStreamManager.git
+git clone https://github.com/Motience/WebSocket-Server1.git
+git clone https://github.com/Motience/Websocket-Server2.git
+git clone https://github.com/Motience/BlockchainHandler.git
 ```
 
-### 2. Start All Services
+### 2. Start Infrastructure
+
+```bash
+# Navigate to readme repository
+cd readme
+
+# Start PostgreSQL and Redis using Docker Compose
+docker compose up -d
+```
+
+### 3. Start All Services
+
+**Option A: Using the start script (from readme repo)**
+```bash
+cd readme
+chmod +x start-all.sh
+./start-all.sh
+```
+
+**Option B: Manual start**
 ```bash
 # Terminal 1 - Authentication Service
-cd ap
+cd AuthenticationPlatform
 npm install
 npm start
 
 # Terminal 2 - Subscription Manager
-cd sm
+cd SubscriptionManager
 npm install
 npm start
 
 # Terminal 3 - Data Stream Manager
-cd dsm
+cd DataStreamManager
 npm install
 npm start
 
 # Terminal 4 - WebSocket Server 1 (Producers)
-cd wss1
+cd WebSocket-Server1
 npm install
 npm start
 
 # Terminal 5 - WebSocket Server 2 (Consumers)
-cd wss2
+cd Websocket-Server2
 npm install
 npm start
 
-# Terminal 6 - IoT Plugin (Producer)
-cd iot_plugin
+# Terminal 6 - Blockchain Handler
+cd BlockchainHandler
+cargo build --release
+cargo run
+
+# Terminal 7 - IoT Plugin (Producer)
+cd DepinPlugin
 cargo build --release
 cargo run
 ```
@@ -244,6 +308,45 @@ wscat -c "ws://localhost:8001/producer?token=<your-token>"
 # Test WebSocket Consumer
 wscat -c "ws://localhost:8002/consumer?token=<your-token>"
 ```
+
+## 📂 Repository Structure
+
+```
+motience-platform/
+├── readme/                      # This repo - Documentation & orchestration
+│   ├── README.md               # Platform overview (this file)
+│   ├── ARCHITECTURE.md         # Detailed architecture
+│   ├── QUICK_START.md          # Setup guide
+│   ├── docker-compose.yml      # Infrastructure setup
+│   ├── start-all.sh            # Start all services script
+│   └── stop-all.sh             # Stop all services script
+├── DepinPlugin/                # IoT device client (Rust)
+├── AuthenticationPlatform/     # Auth service (Node.js)
+├── SubscriptionManager/        # Subscription service (Node.js)
+├── DataStreamManager/          # Data routing + blockchain calls (Node.js)
+├── WebSocket-Server1/          # Producer WebSocket (Node.js)
+├── Websocket-Server2/          # Consumer WebSocket (Node.js)
+└── BlockchainHandler/          # Linera blockchain integration (Rust)
+```
+
+## 🔍 How Data Flows with Blockchain
+
+1. **Producer sends data** → WSS1 → Data Stream Manager
+2. **DSM records transaction** → Calls BlockchainHandler API
+3. **Blockchain records**:
+   - Who sent data (producer ID)
+   - Who receives data (consumer IDs)
+   - Timestamp of transaction
+   - Data hash/reference
+4. **Raw data stored** → Decentralized file storage
+5. **Data delivered** → Redis → WSS2 → Consumer
+6. **Monetization triggered** → Blockchain smart contracts calculate payments
+
+## 📖 Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed system architecture
+- **[QUICK_START.md](QUICK_START.md)** - Step-by-step setup guide
+- **API Docs** - Swagger UI at service endpoints (see below)
 
 ## 📝 License
 
