@@ -32,6 +32,9 @@ IoT Devices (Producers) → wss1 → Data Stream Manager → Redis Pub/Sub → w
                                         (Raw Data)
 ```
 
+<img width="1667" height="864" alt="Screenshot 2025-10-29 at 19 46 59" src="https://github.com/user-attachments/assets/1ef5a936-cb95-43dc-a55c-98280ad81c58" />
+
+
 ## 🔗 Blockchain Integration
 
 The **Linera blockchain** provides:
