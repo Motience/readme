@@ -1,0 +1,20 @@
+# Ignore all subdirectories (service folders)
+ap/
+sm/
+dsm/
+wss1/
+wss2/
+iot_plugin/
+logs/
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
