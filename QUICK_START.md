@@ -2,15 +2,38 @@
 
 Get the Motience DePin platform up and running in 5 minutes.
 
+> **Note:** This guide assumes you're starting from the `readme` repository, which contains documentation, Docker configurations, and orchestration scripts. Individual services are in separate repositories.
+
 ## Prerequisites
 
 - **Node.js** 18+ and npm
-- **Rust** 1.70+ (for IoT plugin)
+- **Rust** 1.70+ (for IoT plugin and BlockchainHandler)
 - **Docker** and Docker Compose
+- **Git** (to clone service repositories)
+
+## Step 0: Clone Repositories
+
+```bash
+# Create workspace directory
+mkdir motience-platform && cd motience-platform
+
+# Clone all service repositories
+git clone https://github.com/Motience/readme.git
+git clone https://github.com/Motience/DepinPlugin.git
+git clone https://github.com/Motience/AuthenticationPlatform.git
+git clone https://github.com/Motience/SubscriptionManager.git
+git clone https://github.com/Motience/DataStreamManager.git
+git clone https://github.com/Motience/WebSocket-Server1.git
+git clone https://github.com/Motience/Websocket-Server2.git
+git clone https://github.com/Motience/BlockchainHandler.git
+```
 
 ## Step 1: Start Infrastructure & Services
 
 ```bash
+# Navigate to readme repository
+cd readme
+
 # First, start infrastructure (PostgreSQL & Redis)
 docker compose up -d
 
@@ -124,6 +147,9 @@ wscat -c "ws://localhost:8001/producer?token=<PRODUCER_TOKEN>"
 
 # Send data
 > {"type":"data","payload":{"device_id":"rpi_001","temperature":24.3,"humidity":51}}
+
+# You'll receive acknowledgment with transaction_id from blockchain
+< {"type":"ack","subscriberCount":1,"transaction_id":"..."}
 ```
 
 ### Option C: Test Consumer
@@ -159,17 +185,21 @@ curl http://localhost:3011/stats
 ### View Logs
 
 ```bash
-# Service logs
+# Service logs (from readme directory)
 tail -f logs/Authentication\ Service\ \(ap\).log
 tail -f logs/WebSocket\ Server\ 1\ \(wss1\).log
 
 # Docker logs
-docker-compose logs -f
+cd readme
+docker compose logs -f
 ```
 
 ## Complete Example Flow
 
 ```bash
+# Navigate to readme repo
+cd readme
+
 # 1. Start everything
 ./start-all.sh
 
@@ -206,7 +236,7 @@ curl -X POST http://localhost:3002/api/subscribe \
   -d '{"producer_id": 1}'
 
 # 7. Test with IoT Plugin
-cd iot_plugin
+cd ../DepinPlugin
 cat > .env << EOF
 DEVICE_ID=rpi_001
 USERNAME=producer1
@@ -237,9 +267,12 @@ docker-compose logs
 ### Database connection errors
 
 ```bash
+# Navigate to readme repo
+cd readme
+
 # Restart infrastructure
-docker-compose down
-docker-compose up -d
+docker compose down
+docker compose up -d
 
 # Wait for initialization
 sleep 10
@@ -260,16 +293,32 @@ curl http://localhost:3011/health  # WSS2
 ## Stopping Everything
 
 ```bash
+# From readme directory
+cd readme
 ./stop-all.sh
 ```
 
 ## Next Steps
 
 - Read the main [README.md](README.md) for architecture details
-- Check individual service READMEs for API documentation
+- Check [ARCHITECTURE.md](ARCHITECTURE.md) for detailed system design
+- Explore individual service repositories for specific documentation
 - Configure production settings in `.env` files
+- Review blockchain integration in [BlockchainHandler](https://github.com/Motience/BlockchainHandler)
 - Set up monitoring and logging
 - Deploy to production infrastructure
+
+## Repository Links
+
+All Motience repositories:
+- **readme**: https://github.com/Motience/readme (Documentation & orchestration)
+- **DepinPlugin**: https://github.com/Motience/DepinPlugin (IoT client)
+- **AuthenticationPlatform**: https://github.com/Motience/AuthenticationPlatform
+- **SubscriptionManager**: https://github.com/Motience/SubscriptionManager
+- **DataStreamManager**: https://github.com/Motience/DataStreamManager
+- **WebSocket-Server1**: https://github.com/Motience/WebSocket-Server1
+- **Websocket-Server2**: https://github.com/Motience/Websocket-Server2
+- **BlockchainHandler**: https://github.com/Motience/BlockchainHandler (Linera blockchain)
 
 ## Architecture Diagram
 
