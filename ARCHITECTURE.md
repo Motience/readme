@@ -6,34 +6,7 @@ Motience is a decentralized physical infrastructure network (DePin) platform for
 
 ## System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Motience DePin Platform                       │
-└─────────────────────────────────────────────────────────────────┘
-
-IoT Devices (Producers)                    Consumers (Applications)
-        │                                              │
-        │                                              │
-        ▼                                              ▼
-  ┌──────────┐                                  ┌──────────┐
-  │   WSS1   │◄──────┐                    ┌────►│   WSS2   │
-  │  (8001)  │       │                    │     │  (8002)  │
-  └──────────┘       │                    │     └──────────┘
-        │            │                    │           │
-        │            │                    │           │
-        ▼            │                    │           ▼
-  ┌──────────┐  ┌───────────┐      ┌──────────┐  ┌──────────┐
-  │   DSM    │  │    AP     │      │    SM    │  │  Redis   │
-  │  (3003)  │  │  (3001)   │      │  (3002)  │  │  Pub/Sub │
-  └──────────┘  └───────────┘      └──────────┘  └──────────┘
-        │            │                    │
-        └────────────┼────────────────────┘
-                     │
-              ┌──────────────┐
-              │  PostgreSQL  │
-              │    (5432)    │
-              └──────────────┘
-```
+<img width="1667" height="864" alt="Screenshot 2025-10-29 at 19 46 59" src="https://github.com/user-attachments/assets/1ef5a936-cb95-43dc-a55c-98280ad81c58" />
 
 ## Components
 
